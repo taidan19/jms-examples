@@ -15,21 +15,28 @@ import java.util.UUID;
  *  - Code has been simplified and cleaned up in some places.
  *  - Adds some extra whitespace between sections to make it easier to focus on
  *    what's going on in each step of the process.
- *  - Chat application has been modified so that it can still run if no
- *    arguments are applied. This makes it easier to run in an IDE or even
- *    on the command line.
+ *  - Application has been modified so that it can still run if no
+ *    runtime arguments are applied. This makes it easier to run in an IDE or
+ *    even on the command line.
  */
 public class Chat implements javax.jms.MessageListener{
+
+
+
+
     private TopicSession pubSession;
     private TopicPublisher publisher;
     private TopicConnection connection;
     private String username;
 
-    /**
-      * Constructor used to Initialize the Chat application.
-      */
+
+
     public Chat(String topicFactory, String topicName, String username)
         throws Exception {
+
+        // Intialize the Chat application variables.
+        this.username = username;
+
 
 
 
@@ -51,7 +58,8 @@ public class Chat implements javax.jms.MessageListener{
 
 
         // Use the InitialContext to look up a JMS Connection Factory.
-        TopicConnectionFactory conFactory = (TopicConnectionFactory) ctx.lookup(topicFactory);
+        TopicConnectionFactory conFactory =
+            (TopicConnectionFactory) ctx.lookup(topicFactory);
 
 
 
@@ -61,7 +69,7 @@ public class Chat implements javax.jms.MessageListener{
         // Use the JMS Connection Factory to create a JMS Topic Connection. We
         // should only have to create one Connection for a given application,
         // as all other JMS objects can be derived from it.
-        TopicConnection connection = conFactory.createTopicConnection();
+        connection = conFactory.createTopicConnection();
 
 
 
@@ -89,8 +97,8 @@ public class Chat implements javax.jms.MessageListener{
 
         // Create the JMS Publisher, first by creating a JMS Topic Session, and
         // then creating the Topic Publisher from the session.
-        TopicSession pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
-        TopicPublisher publisher = pubSession.createPublisher(chatTopic);
+        pubSession = connection.createTopicSession(false, Session.AUTO_ACKNOWLEDGE);
+        publisher = pubSession.createPublisher(chatTopic);
 
 
 
@@ -109,17 +117,6 @@ public class Chat implements javax.jms.MessageListener{
         // incoming messages. This class itself is such a listener, so we'll
         // add it.
         subscriber.setMessageListener(this);
-
-
-
-
-
-        // Intialize the Chat application variables.
-        this.connection = connection;
-        this.pubSession = pubSession;
-        this.publisher = publisher;
-        this.username = username;
-
 
 
 
@@ -187,7 +184,7 @@ public class Chat implements javax.jms.MessageListener{
 
             /*
              * The original version of this program required three command line
-             * arguments to run, though it did notexit gracefully if the args
+             * arguments to run, though it did not exit gracefully if the args
              * weren't provided. I have modified it to use defaults pulled from
              * the jndi.properties file, along with a random UUID as the user
              * name.
@@ -202,9 +199,19 @@ public class Chat implements javax.jms.MessageListener{
                 chat = new Chat(args[0],args[1],args[2]);
             }
 
+
+
+
+
+
             // Create an input reader to read chat messages from the command
             // line.
             BufferedReader commandLine = new BufferedReader(new InputStreamReader(System.in));
+
+
+
+
+
 
             // Continue to read text from the command line until "exit" is
             // entered by the user.
